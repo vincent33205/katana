@@ -19,7 +19,7 @@ require (
 	github.com/projectdiscovery/gologger v1.1.54
 	github.com/projectdiscovery/hmap v0.0.92
 	github.com/projectdiscovery/mapcidr v1.1.34
-	github.com/projectdiscovery/ratelimit v0.0.79
+	github.com/projectdiscovery/ratelimit v0.0.81
 	github.com/projectdiscovery/retryablehttp-go v1.0.117
 	github.com/projectdiscovery/utils v0.4.22
 	github.com/projectdiscovery/wappalyzergo v0.2.42
