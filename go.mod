@@ -57,7 +57,6 @@ require (
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/felixge/fgprof v0.9.5 // indirect
 	github.com/gaissmai/bart v0.20.5 // indirect
-	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-github/v30 v30.1.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/pprof v0.0.0-20240227163752-401108e1b7e7 // indirect
@@ -111,7 +110,7 @@ require (
 	github.com/yuin/goldmark-emoji v1.0.3 // indirect
 	github.com/zcalusic/sysinfo v1.0.2 // indirect
 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
-	golang.org/x/oauth2 v0.11.0 // indirect
+	golang.org/x/oauth2 v0.27.0 // indirect
 	golang.org/x/sync v0.16.0 // indirect
 	golang.org/x/term v0.33.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
