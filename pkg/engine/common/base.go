@@ -11,7 +11,6 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/go-rod/rod"
 	"github.com/projectdiscovery/gologger"
-	"github.com/projectdiscovery/katana/pkg/engine/parser"
 	"github.com/projectdiscovery/katana/pkg/engine/parser/files"
 	"github.com/projectdiscovery/katana/pkg/navigation"
 	"github.com/projectdiscovery/katana/pkg/output"
@@ -171,7 +170,7 @@ func (s *Shared) NewCrawlSessionWithURL(URL string) (*CrawlSession, error) {
 			StatusCode:   resp.StatusCode,
 			Headers:      utils.FlattenHeaders(resp.Header),
 		}
-		navigationRequests := parser.ParseResponse(navigationResponse)
+		navigationRequests := s.Options.Parser.ParseResponse(navigationResponse)
 		s.Enqueue(queue, navigationRequests...)
 	})
 	if err != nil {
@@ -208,6 +207,11 @@ func (s *Shared) Do(crawlSession *CrawlSession, doRequest DoRequestFunc) error {
 			continue
 		}
 
+		if !s.Options.ValidatePath(req.URL) {
+			gologger.Debug().Msgf("`%v` filtered path. skipping", req.URL)
+			continue
+		}
+
 		inScope, scopeErr := s.Options.ValidateScope(req.URL, crawlSession.Hostname)
 		if scopeErr != nil {
 			gologger.Debug().Msgf("Error validating scope for `%v`: %v. skipping", req.URL, scopeErr)
@@ -219,7 +223,7 @@ func (s *Shared) Do(crawlSession *CrawlSession, doRequest DoRequestFunc) error {
 		}
 
 		wg.Add()
-		// gologger.Debug().Msgf("Visting: %v", req.URL) // not sure if this is needed
+		// gologger.Debug().Msgf("Visiting: %v", req.URL) // not sure if this is needed
 		go func() {
 			defer wg.Done()
 
@@ -254,7 +258,7 @@ func (s *Shared) Do(crawlSession *CrawlSession, doRequest DoRequestFunc) error {
 				return
 			}
 
-			navigationRequests := parser.ParseResponse(resp)
+			navigationRequests := s.Options.Parser.ParseResponse(resp)
 			s.Enqueue(crawlSession.Queue, navigationRequests...)
 		}()
 	}

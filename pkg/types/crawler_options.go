@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/projectdiscovery/fastdialer/fastdialer"
+	"github.com/projectdiscovery/katana/pkg/engine/parser"
 	"github.com/projectdiscovery/katana/pkg/output"
 	"github.com/projectdiscovery/katana/pkg/utils/extensions"
 	"github.com/projectdiscovery/katana/pkg/utils/filters"
@@ -24,6 +25,8 @@ type CrawlerOptions struct {
 	OutputWriter output.Writer
 	// RateLimit is a mechanism for controlling request rate limit
 	RateLimit *ratelimit.Limiter
+	// Parser is a mechanism for extracting new URLS from responses
+	Parser *parser.Parser
 	// Options contains the user specified configuration options
 	Options *Options
 	// ExtensionsValidator is a validator for file extensions
@@ -48,6 +51,16 @@ type CrawlerOptions struct {
 func NewCrawlerOptions(options *Options) (*CrawlerOptions, error) {
 	options.ConfigureOutput()
 	extensionsValidator := extensions.NewValidator(options.ExtensionsMatch, options.ExtensionFilter)
+
+	parserOptions := &parser.Options{
+		AutomaticFormFill:      options.AutomaticFormFill,
+		ScrapeJSLuiceResponses: options.ScrapeJSLuiceResponses,
+		ScrapeJSResponses:      options.ScrapeJSResponses,
+		DisableRedirects:       options.DisableRedirects,
+	}
+
+	responseParser := parser.NewResponseParser()
+	responseParser.InitWithOptions(parserOptions)
 
 	dialerOpts := fastdialer.DefaultOptions
 	if len(options.Resolvers) > 0 {
@@ -111,6 +124,7 @@ func NewCrawlerOptions(options *Options) (*CrawlerOptions, error) {
 
 	crawlerOptions := &CrawlerOptions{
 		ExtensionsValidator: extensionsValidator,
+		Parser:              responseParser,
 		ScopeManager:        scopeManager,
 		UniqueFilter:        itemFilter,
 		Options:             options,
