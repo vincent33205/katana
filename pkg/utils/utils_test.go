@@ -20,3 +20,27 @@ func TestParseRefreshTag(t *testing.T) {
 	values := ParseRefreshTag(header)
 	require.Equal(t, "/test/headers/refresh.found", values, "could not parse correct links")
 }
+
+func TestTransformIndex(t *testing.T) {
+	t.Run("empty array", func(t *testing.T) {
+		var arr []int
+		require.Equal(t, 0, TransformIndex(arr, 5))
+	})
+
+	arr := []int{10, 20, 30}
+
+	t.Run("clamp to first element", func(t *testing.T) {
+		require.Equal(t, 0, TransformIndex(arr, -10))
+		require.Equal(t, 0, TransformIndex(arr, 0))
+		require.Equal(t, 0, TransformIndex(arr, 1))
+	})
+
+	t.Run("valid indexes", func(t *testing.T) {
+		require.Equal(t, 1, TransformIndex(arr, 2))
+		require.Equal(t, 2, TransformIndex(arr, 3))
+	})
+
+	t.Run("clamp to last element", func(t *testing.T) {
+		require.Equal(t, 2, TransformIndex(arr, 10))
+	})
+}
