@@ -9,14 +9,5 @@ func TransformIndex[T any](arr []T, index int) int {
 	}
 
 	idx := index - 1
-	if idx < 0 {
-		idx = 0
-	}
-
-	max := len(arr) - 1
-	if idx > max {
-		idx = max
-	}
-
-	return idx
+	return min(max(idx, 0), len(arr)-1)
 }
