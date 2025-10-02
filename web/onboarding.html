@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Katana Onboarding</title>
+    <link rel="stylesheet" href="onboarding.css" />
+  </head>
+  <body>
+    <div class="modal-overlay" role="presentation">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="onboarding-title">
+        <button type="button" class="modal__close" aria-label="Close onboarding">×</button>
+        <h1 id="onboarding-title">Welcome to Katana</h1>
+        <p>
+          Get started by importing your first targets. You can always revisit this
+          wizard from the help menu.
+        </p>
+        <form class="modal__actions">
+          <label class="field">
+            <span class="field__label">Workspace name</span>
+            <input type="text" placeholder="Acme Corp" />
+          </label>
+          <button type="submit" class="primary">Continue</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
