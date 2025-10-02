@@ -31,6 +31,11 @@ func TestManagerValidate(t *testing.T) {
 			validated, err := manager.Validate(parsed.URL, "test.com")
 			require.NoError(t, err, "could not validate host")
 			require.True(t, validated, "could not get correct in-scope validation")
+
+			parsed, _ = urlutil.Parse("https://example.com/index.php")
+			validated, err = manager.Validate(parsed.URL, "localhost")
+			require.NoError(t, err, "could not validate host")
+			require.False(t, validated, "unexpected in-scope validation for hostname without domain component")
 		})
 		t.Run("rdn", func(t *testing.T) {
 			manager, err := NewManager(nil, nil, "rdn", false)

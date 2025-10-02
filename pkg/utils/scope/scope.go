@@ -132,6 +132,9 @@ func (m *Manager) validateDNS(hostname, rootHostname string) (bool, error) {
 	}
 	switch m.fieldScope {
 	case dnDnsScopeField:
+		if dn == "" {
+			return strings.Contains(hostname, rdn), nil
+		}
 		return strings.Contains(hostname, dn), nil
 	case rdnDnsScopeField:
 		return strings.HasSuffix(hostname, rdn), nil
