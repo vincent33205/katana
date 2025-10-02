@@ -609,36 +609,34 @@ func bodyMetaContentTagParser(resp *navigation.Response) (navigationRequests []*
 func bodyHtmxAttrParser(resp *navigation.Response) (navigationRequests []*navigation.Request) {
 	// exclude hx-delete
 	resp.Reader.Find("[hx-get],[hx-post],[hx-put],[hx-patch]").Each(func(i int, item *goquery.Selection) {
-		req := &navigation.Request{
-			RootHostname: resp.RootHostname,
-			Depth:        resp.Depth,
-			Source:       resp.Resp.Request.URL.String(),
-			Tag:          "htmx",
+		newRequest := func(method, attribute, value string) {
+			if value == "" {
+				return
+			}
+
+			req := &navigation.Request{
+				RootHostname: resp.RootHostname,
+				Depth:        resp.Depth,
+				Source:       resp.Resp.Request.URL.String(),
+				Tag:          "htmx",
+				Method:       method,
+				Attribute:    attribute,
+				URL:          resp.AbsoluteURL(value),
+			}
+			navigationRequests = append(navigationRequests, req)
 		}
 
 		if hxGet, ok := item.Attr("hx-get"); ok && hxGet != "" {
-			req.Method = http.MethodGet
-			req.URL = resp.AbsoluteURL(hxGet)
-			req.Attribute = "hx-get"
-			navigationRequests = append(navigationRequests, req)
+			newRequest(http.MethodGet, "hx-get", hxGet)
 		}
 		if hxPost, ok := item.Attr(("hx-post")); ok && hxPost != "" {
-			req.Method = http.MethodPost
-			req.URL = resp.AbsoluteURL(hxPost)
-			req.Attribute = "hx-post"
-			navigationRequests = append(navigationRequests, req)
+			newRequest(http.MethodPost, "hx-post", hxPost)
 		}
 		if hxPut, ok := item.Attr(("hx-put")); ok && hxPut != "" {
-			req.Method = http.MethodPut
-			req.URL = resp.AbsoluteURL(hxPut)
-			req.Attribute = "hx-put"
-			navigationRequests = append(navigationRequests, req)
+			newRequest(http.MethodPut, "hx-put", hxPut)
 		}
 		if hxPatch, ok := item.Attr(("hx-patch")); ok && hxPatch != "" {
-			req.Method = http.MethodPatch
-			req.URL = resp.AbsoluteURL(hxPatch)
-			req.Attribute = "hx-patch"
-			navigationRequests = append(navigationRequests, req)
+			newRequest(http.MethodPatch, "hx-patch", hxPatch)
 		}
 	})
 	return
