@@ -522,4 +522,16 @@ func TestHtmxBodyParser(t *testing.T) {
 		require.Equal(t, "https://htmx.org/account", navigationRequests[0].URL, "could not get correct url")
 		require.Equal(t, "PATCH", navigationRequests[0].Method, "could not get correct method")
 	})
+	t.Run("multiple attributes", func(t *testing.T) {
+		documentReader, _ := goquery.NewDocumentFromReader(strings.NewReader(`<div hx-get="/get" hx-post="/post"></div>`))
+		resp := &navigation.Response{Resp: &http.Response{Request: &http.Request{URL: parsed.URL}}, Reader: documentReader}
+		navigationRequests := bodyHtmxAttrParser(resp)
+		require.Len(t, navigationRequests, 2)
+
+		require.Equal(t, "https://htmx.org/get", navigationRequests[0].URL, "could not get correct url")
+		require.Equal(t, http.MethodGet, navigationRequests[0].Method, "could not get correct method")
+
+		require.Equal(t, "https://htmx.org/post", navigationRequests[1].URL, "could not get correct url")
+		require.Equal(t, http.MethodPost, navigationRequests[1].Method, "could not get correct method")
+	})
 }
