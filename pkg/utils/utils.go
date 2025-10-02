@@ -65,7 +65,7 @@ func ParseRefreshTag(value string) string {
 
 // WebUserAgent returns the chrome-web user agent
 func WebUserAgent() string {
-        return "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+	return "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
 }
 
 func FlattenHeaders(headers map[string][]string) map[string]string {
@@ -89,4 +89,44 @@ func ReplaceAllQueryParam(reqUrl, val string) string {
 	})
 	u.RawQuery = params.Encode()
 	return u.String()
+}
+
+// TransformIndex 將用戶提供的索引（從 1 開始）安全地轉換為陣列索引（從 0 開始）
+// 此函數不會引發 panic，能夠處理負數索引或超出範圍的索引
+//
+// 參數:
+//   - arr: 泛型陣列切片，用於確定有效的索引範圍
+//   - index: 用戶提供的索引（基於 1 的索引）
+//
+// 返回值:
+//   - 轉換後的陣列索引（基於 0 的索引）
+//
+// 行為說明:
+//   - 如果陣列為空，返回 0
+//   - 如果索引 <= 1（包括負數），返回 0（第一個元素）
+//   - 如果索引 >= 陣列長度，返回 len(arr)-1（最後一個元素）
+//   - 對於有效索引，返回 index-1
+//
+// 範例:
+//
+//	arr := []int{10, 20, 30}
+//	TransformIndex(arr, 1)  // 返回 0（第一個元素）
+//	TransformIndex(arr, 2)  // 返回 1（第二個元素）
+//	TransformIndex(arr, 0)  // 返回 0（鉗位到第一個元素）
+//	TransformIndex(arr, 10) // 返回 2（鉗位到最後一個元素）
+func TransformIndex[T any](arr []T, index int) int {
+	if len(arr) == 0 {
+		// 沒有有效索引，防止調用者使用負數
+		return 0
+	}
+	if index <= 1 {
+		// 負數索引或無效索引
+		return 0
+	}
+	if index >= len(arr) {
+		// 索引超出範圍
+		return len(arr) - 1
+	}
+	// 有效索引
+	return index - 1
 }
